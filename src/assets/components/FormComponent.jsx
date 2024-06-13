@@ -68,7 +68,15 @@ const FormComponent = () => {
       if (response.ok) {
         setsuccesfulMessage("added Succesfully");
         setIsLoading(false);
-        setFormData("");
+        setFormData({
+          name: "",
+          businessOffered: "",
+          email: "",
+          phoneNumber: "",
+          location: "",
+          agencyDetails: "",
+          image: "",
+        });
       } else {
       }
     }
