@@ -57,11 +57,7 @@ function Nav() {
                 </Link>
               </div>
             )}
-            {currentUser && currentUser.userType === "designer" && (
-              <button className="border border-[#0D47A1] rounded-full py-4 px-[4em] bg-[#0D47A1] text-[white] font-bold outline-none  hover:border-white">
-                Update Profile
-              </button>
-            )}
+            
           </ul>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Loader from "./Loader";
+
 const FormComponent = () => {
   const [error, setError] = useState({});
   const [succesfulMessage, setsuccesfulMessage] = useState();
@@ -68,16 +69,9 @@ const FormComponent = () => {
       if (response.ok) {
         setsuccesfulMessage("added Succesfully");
         setIsLoading(false);
-        setFormData({
-          name: "",
-          businessOffered: "",
-          email: "",
-          phoneNumber: "",
-          location: "",
-          agencyDetails: "",
-          image: "",
-        });
-      } else {
+        // window.location.reload();
+
+        // setFormData();
       }
     }
   }

@@ -9,7 +9,7 @@ function Dashboard() {
 
   useEffect(() => {
     async function fetchAgencyData() {
-      const url = "https://jantah-backend.onrender.com/api/agency";
+      let url = "https://jantah-backend.onrender.com/api/agency";
 
       const response = await fetch(url);
       const data = await response.json();
@@ -17,10 +17,13 @@ function Dashboard() {
 
       if (response.ok) {
         setAgencies(data);
+
         const uniqueLocations = [
           ...new Set(data.map((agency) => agency.location)),
         ];
         setLocations(uniqueLocations);
+      } else {
+        setNotification("Failed to send email. Please try again later.");
       }
     }
     fetchAgencyData();
@@ -77,7 +80,8 @@ function Dashboard() {
                 phoneNumber={agency.phoneNumber}
                 agencyDetails={agency.agencyDetails}
                 image={agency.image}
-              />
+                agencyEmail={agency.agencyEmail ? agency.agencyEmail : 'otienomito99@gmail.com'}
+                />
             ))}
           </div>
         ) : (

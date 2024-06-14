@@ -1,5 +1,8 @@
 import { IoLocation } from "react-icons/io5";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import emailjs from "@emailjs/browser";
+
 function AgencyCard({
   image,
   name,
@@ -8,9 +11,41 @@ function AgencyCard({
   phoneNumber,
   businessOffered,
   location,
+  agencyEmail,
 }) {
+  const [notification, setNotification] = useState("");
+
+  const sendEmail = (clientEmail, agencyEmail) => {
+    const templateParams = {
+      clientEmail: clientEmail,
+      agencyEmail: agencyEmail,
+      message: notification,
+    };
+    emailjs
+      .send(
+        "service_jy657if",
+        "template_z684glt",
+        templateParams,
+        "9Y_JIEpLe04pmagIp"
+      )
+      .then(
+        (response) => {
+          console.log("Email sent successfully:", response);
+          setNotification("Email sent successfully!");
+        },
+        (error) => {
+          console.error("Error sending email:", error);
+          setNotification("Failed to send email. Please try again later.");
+        }
+      );
+  };
+
   const navigate = useNavigate();
   function handlNavigate() {
+    if (agencyEmail) {
+      sendEmail("otienomito99@gmail.com", agencyEmail);
+    }
+
     navigate("/payment");
   }
   return (
@@ -25,6 +60,7 @@ function AgencyCard({
           <div>
             <h2 className="text-2xl font-bold">{name}</h2>
             <p className="text-gray-600">{agencyDetails}</p>
+            {/* <p>{agencyEmail}</p> */}
           </div>
         </div>
         <div>
@@ -52,6 +88,7 @@ function AgencyCard({
           </button>
         </div>
       </div>
+      {/* <p className="">{alert(notification)}</p> */}
     </div>
   );
 }
