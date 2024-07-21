@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Loader from "./Loader";
 
 const FormComponent = () => {
+  const [update, setUpdate] = useState({});
   const [error, setError] = useState({});
   const [succesfulMessage, setsuccesfulMessage] = useState();
   const [errorMessage, setErrorMessage] = useState();
@@ -13,6 +14,14 @@ const FormComponent = () => {
     phoneNumber: "",
     image: null,
   });
+
+  useEffect(() => {
+    const agencyData = JSON.parse(localStorage.getItem("user"));
+
+    if (agencyData) {
+      setUpdate(agencyData);
+    }
+  }, []);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,7 +78,7 @@ const FormComponent = () => {
       if (response.ok) {
         setsuccesfulMessage("added Succesfully");
         setIsLoading(false);
-        // window.location.reload();
+        window.location.reload();
 
         // setFormData();
       }
@@ -88,14 +97,47 @@ const FormComponent = () => {
             >
               Name
             </label>
-            <p className="text-red-500 font-bold">{error.name && error.name}</p>
-            <input
+            <p
               className="shadow appearance-none border rounded w-[100%] py-4 px-3 text-gray-700 "
-              type="text"
-              placeholder="Enter Name"
-              name="name"
               onChange={handleChange}
-            />
+              name="name"
+            >
+              {update.fullName}
+            </p>
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="email"
+            >
+              Email
+            </label>
+
+            <p
+              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={handleChange}
+              name="email"
+            >
+              {update.email}
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="phoneNumber"
+            >
+              Phone Number
+            </label>
+
+            <p
+              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={handleChange}
+              name="phoneNumber"
+            >
+              {update.phoneNumber}
+            </p>
           </div>
           <div className="mb-4 w-[100%] ">
             <label
@@ -117,45 +159,6 @@ const FormComponent = () => {
             />
           </div>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <p className="text-red-500 font-bold">
-              {error.email && error.email}
-            </p>
-
-            <input
-              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              type="email"
-              placeholder="Enter Email"
-              name="email"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="phoneNumber"
-            >
-              Phone Number
-            </label>
-            <p className="text-red-500 font-bold">
-              {error.phoneNumber && error.phoneNumber}
-            </p>
-
-            <input
-              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              type="tel"
-              placeholder="Enter Phone Number"
-              name="phoneNumber"
-              onChange={handleChange}
-            />
-          </div>
 
           <div className="mb-6">
             <label
