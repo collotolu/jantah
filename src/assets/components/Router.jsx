@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import Dashboards from "../pages/Dashboards";
 import Form from "../pages/Form";
 import Payment from "../pages/Payment";
+import Agencydashboard from "../pages/Agencydashboard";
 function Router() {
   return (
     <div>
@@ -59,6 +60,14 @@ function Router() {
             element={
               <Layout>
                 <Payment />
+              </Layout>
+            }
+          />
+            <Route
+            path="agency"
+            element={
+              <Layout>
+                <Agencydashboard />
               </Layout>
             }
           />

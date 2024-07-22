@@ -12,6 +12,8 @@ const FormComponent = () => {
     agencyDetails: "",
     email: "",
     phoneNumber: "",
+    businessOffered: "",
+    location: "",
     image: null,
   });
 
@@ -20,50 +22,63 @@ const FormComponent = () => {
 
     if (agencyData) {
       setUpdate(agencyData);
+      setFormData({
+        name: agencyData.fullName || "",
+        agencyDetails: agencyData.agencyDetails || "",
+        email: agencyData.email || "",
+        phoneNumber: agencyData.phoneNumber || "",
+        businessOffered: agencyData.businessOffered || "",
+        location: agencyData.location || "",
+        image: agencyData.image || null,
+      });
     }
   }, []);
 
   function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (e.target.name === "image") {
-      const files = e.target.files;
+    const { name, value, files } = e.target;
+    if (name === "image" && files.length > 0) {
       const reader = new FileReader();
-      reader.onloadend = function () {
-        const dataURL = reader.result;
+      reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          image: dataURL,
+          image: reader.result,
         }));
       };
       reader.readAsDataURL(files[0]);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   }
 
   async function handleSubmit() {
     const errors = {};
-    if (!formData.name || formData.name === "") {
-      errors.name = "please enter your name";
+    if (!formData.name) {
+      errors.name = "Please enter your name";
     }
-    if (!formData.agencyDetails || formData.agencyDetails === "") {
-      errors.agencyDetails = "please enter the Agency Details";
+    if (!formData.agencyDetails) {
+      errors.agencyDetails = "Please enter the agency details";
     }
-    if (!formData.email || formData.email === "") {
-      errors.email = "please enter your email addres";
+    if (!formData.email) {
+      errors.email = "Please enter your email address";
     }
-    if (!formData.phoneNumber || formData.phoneNumber === "") {
-      errors.phoneNumber = "please enter your phone";
+    if (!formData.phoneNumber) {
+      errors.phoneNumber = "Please enter your phone number";
     }
-    if (!formData.businessOffered || formData.businessOffered === "") {
-      errors.businessOffered = "please enter  the business offered";
+    if (!formData.businessOffered) {
+      errors.businessOffered = "Please enter the business offered";
     }
-    if (!formData.location || formData.location === "") {
-      errors.location = "please enter your Location";
+    if (!formData.location) {
+      errors.location = "Please enter your location";
     }
-    if (!formData.image || formData.image === "") {
-      errors.image = "Upload an Image";
+    if (!formData.image) {
+      errors.image = "Please upload an image";
     }
     setError(errors);
-    if (!{} === false) {
+
+    if (Object.keys(errors).length === 0) {
       setIsLoading(true);
       const url = "https://jantah-backend.onrender.com/api/agency/add";
       const options = {
@@ -71,16 +86,22 @@ const FormComponent = () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(formData),
       };
-      const response = await fetch(url, options);
-      const data = await response.json().catch(error);
-      console.log(data);
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
 
-      if (response.ok) {
-        setsuccesfulMessage("added Succesfully");
+        if (response.ok) {
+          setsuccesfulMessage("Added successfully");
+          setIsLoading(false);
+          window.location.reload();
+        } else {
+          setErrorMessage(data.message || "Failed to add the agency");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setErrorMessage("An error occurred while submitting the form");
+        console.error(error);
         setIsLoading(false);
-        window.location.reload();
-
-        // setFormData();
       }
     }
   }
@@ -88,136 +109,111 @@ const FormComponent = () => {
   return (
     <div className="flex items-center justify-center my-[2em] bg-[#E0F7FF] h-[150vh]">
       {isLoading && <Loader />}
-      <div className="bg-white shadow-md rounded p-[7em] w-[40%] ">
+      <div className="bg-white shadow-md rounded p-[7em] w-[40%]">
         <div>
-          <div className="mb-4 w-[100%] ">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="name"
-            >
+          <div className="mb-4 w-[100%]">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
               Name
             </label>
-            <p
-              className="shadow appearance-none border rounded w-[100%] py-4 px-3 text-gray-700 "
-              onChange={handleChange}
+            <input
+              className="shadow appearance-none border rounded w-[100%] py-4 px-3 text-gray-700"
+              type="text"
+              placeholder="Enter your name"
               name="name"
-            >
-              {update.fullName}
-            </p>
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <p className="text-red-500 font-bold">{error.name && error.name}</p>
           </div>
 
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email
             </label>
-
-            <p
-              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleChange}
-              name="email"
-            >
-              {update.email}
-            </p>
-          </div>
-
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="phoneNumber"
-            >
-              Phone Number
-            </label>
-
-            <p
-              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleChange}
-              name="phoneNumber"
-            >
-              {update.phoneNumber}
-            </p>
-          </div>
-          <div className="mb-4 w-[100%] ">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="name"
-            >
-              Business Offered
-            </label>
-            <p className="text-red-500 font-bold">
-              {error.businessOffered && error.businessOffered}
-            </p>
-
             <input
-              className="shadow appearance-none border rounded w-[100%] py-4 px-3 text-gray-700 "
-              type="text"
-              placeholder="Plumbers,Cleaners....etc"
-              name="businessOffered"
+              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="email"
+              placeholder="Enter your email address"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
             />
+            <p className="text-red-500 font-bold">{error.email && error.email}</p>
           </div>
 
-
           <div className="mb-6">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="phoneNumber"
-            >
-              Location{" "}
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+              Phone Number
             </label>
-            <p className="text-red-500 font-bold">
-              {error.location && error.location}
-            </p>
-
             <input
               className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="tel"
-              placeholder="Enter Agencies Location"
-              name="location"
+              placeholder="Enter your phone number"
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleChange}
             />
+            <p className="text-red-500 font-bold">{error.phoneNumber && error.phoneNumber}</p>
+          </div>
+
+          <div className="mb-4 w-[100%]">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="businessOffered">
+              Business Offered
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-[100%] py-4 px-3 text-gray-700"
+              type="text"
+              placeholder="Plumbers, Cleaners, etc."
+              name="businessOffered"
+              value={formData.businessOffered}
+              onChange={handleChange}
+            />
+            <p className="text-red-500 font-bold">{error.businessOffered && error.businessOffered}</p>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
+              Location
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Enter agency location"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+            />
+            <p className="text-red-500 font-bold">{error.location && error.location}</p>
           </div>
 
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="agencyDetails"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agencyDetails">
               Agency Details
             </label>
-            <p className="text-red-500 font-bold">
-              {error.agencyDetails && error.agencyDetails}
-            </p>
-
             <textarea
               className="shadow appearance-none border rounded w-full py-6 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
-              placeholder="Enter Agency Details"
+              placeholder="Enter agency details"
               name="agencyDetails"
+              value={formData.agencyDetails}
               onChange={handleChange}
             />
+            <p className="text-red-500 font-bold">{error.agencyDetails && error.agencyDetails}</p>
           </div>
 
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="image"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
               Upload Image
             </label>
-            <p className="text-red-500 font-bold">
-              {error.image && error.image}
-            </p>
-
             <input
               type="file"
               accept="image/*"
               name="image"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+            <p className="text-red-500 font-bold">{error.image && error.image}</p>
           </div>
+
           {formData.image && (
             <div className="mb-4">
               <img src={formData.image} alt="Uploaded" className="w-[40%]" />
@@ -226,17 +222,15 @@ const FormComponent = () => {
 
           <div className="flex items-center justify-between">
             <button
-              className="bg-[#FE9C0A]  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-[#FE9C0A] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
               onClick={handleSubmit}
             >
-              Submit{" "}
+              Submit
             </button>
           </div>
-          <p className="text-green-500 text-[2em] font-bold">
-            {" "}
-            {succesfulMessage && succesfulMessage}
-          </p>
+          <p className="text-green-500 text-[2em] font-bold">{succesfulMessage && succesfulMessage}</p>
+          <p className="text-red-500 text-[2em] font-bold">{errorMessage && errorMessage}</p>
         </div>
       </div>
     </div>
