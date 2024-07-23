@@ -1,12 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import Profile from "../components/Profile";
 import Clients from "../components/Clients";
-import UpdateWork from "../components/UpdateWork";
 import Loader from "./Loader";
 
-const Agencydash = () => {
-  const [agencyData, setAgencyData] = useState(null);
+function Agencydash() {
+  const [agencyData, setAgencyData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -26,15 +24,14 @@ const Agencydash = () => {
   }
 
   return (
-    <div className="dashboard-container my-[10%]">
-      <h1 className="dashboard-title">Agency Dashboard</h1>
+    <div className="dashboard-container my-[4%] bg-[#E0F7FF] h-[100vh] ">
+      <h1 className="dashboard-title font-bold text-[2em] text-center">Agency Dashboard</h1>
       <div className="dashboard-sections">
         <Profile agencyData={agencyData} setAgencyData={setAgencyData} />
-        <UpdateWork agencyData={agencyData} setAgencyData={setAgencyData} />
         <Clients agencyId={agencyData.id} />
       </div>
     </div>
   );
-};
+}
 
 export default Agencydash;

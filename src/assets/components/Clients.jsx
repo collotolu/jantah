@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 
 const Clients = ({ agencyId }) => {
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState({});
 
   useEffect(() => {
     const fetchClients = async () => {
-      // Fetch clients from your database using the agencyId
-      const response = await fetch(`/api/clients?agencyId=${agencyId}`);
+      const url = "https://jantah-backend.onrender.com/api/auth/Register";
+      const response = await fetch(url);
       const data = await response.json();
-      setClients(data);
+      console.log(data);
+    //   if (data.usertype === client) {
+    //     setClients(client);
+    //   }
     };
 
     fetchClients();
@@ -18,9 +21,7 @@ const Clients = ({ agencyId }) => {
     <div className="clients-section">
       <h2>Clients</h2>
       <ul>
-        {clients.map((client) => (
-          <li key={client.id}>{client.name}</li>
-        ))}
+        {/* {clients && client.fullName} */}
       </ul>
     </div>
   );
