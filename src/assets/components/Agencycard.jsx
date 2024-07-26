@@ -12,6 +12,7 @@ function AgencyCard({
   businessOffered,
   location,
   agencyEmail,
+  onClick, // New prop for handling clicks
 }) {
   const [notification, setNotification] = useState("");
 
@@ -41,15 +42,19 @@ function AgencyCard({
   };
 
   const navigate = useNavigate();
-  function handlNavigate() {
+  function handleNavigate() {
     if (agencyEmail) {
       sendEmail("otienomito99@gmail.com", agencyEmail);
     }
 
     navigate("/payment");
   }
+
   return (
-    <div className="bg-white rounded-md shadow-md p-6 border w-full mx-auto mb-8">
+    <div
+      className="bg-white rounded-md shadow-md p-6 border w-full mx-auto mb-8 cursor-pointer" // Added cursor-pointer
+      onClick={onClick} // Handle click event
+    >
       <div>
         <div className="flex items-center gap-4">
           <img
@@ -82,7 +87,7 @@ function AgencyCard({
           </div>
           <button
             className="bg-[#FE9C0A] text-white px-4 py-2 rounded-md shadow-md transition duration-300 hover:bg-yellow-600"
-            onClick={handlNavigate}
+            onClick={handleNavigate}
           >
             Book Now
           </button>

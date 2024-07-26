@@ -1,16 +1,18 @@
-import { useState, useEffect } from "react";
-import Agencycard from "./Agencycard";
+import React, { useState, useEffect } from "react";
+import AgencyCard from "../components/Agencycard";
+import Profile from "../components/Profile";
+
 function Dashboard() {
   const [agencies, setAgencies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [filteredAgencies, setFilteredAgencies] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [selectedAgency, setSelectedAgency] = useState(null);
 
   useEffect(() => {
     async function fetchAgencyData() {
       let url = "https://jantah-backend.onrender.com/api/agency";
-
       const response = await fetch(url);
       const data = await response.json();
       console.log(data);
@@ -23,11 +25,12 @@ function Dashboard() {
         ];
         setLocations(uniqueLocations);
       } else {
-        setNotification("Failed to send email. Please try again later.");
+        // Handle fetch error
       }
     }
     fetchAgencyData();
   }, []);
+
   useEffect(() => {
     const filtered = agencies.filter((agency) => {
       return (
@@ -39,6 +42,10 @@ function Dashboard() {
     });
     setFilteredAgencies(filtered);
   }, [agencies, searchQuery, locationFilter]);
+
+  const handleSelectAgency = (agency) => {
+    setSelectedAgency(agency);
+  };
 
   return (
     <div>
@@ -68,26 +75,34 @@ function Dashboard() {
 
       <div className="bg-[#E0F7FF]">
         {filteredAgencies.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-[90%] mx-auto ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-[90%] mx-auto">
             {locationFilter && <p>Filtered by: {locationFilter}</p>}
             {filteredAgencies.map((agency) => (
-              <Agencycard
+              <AgencyCard
                 key={agency.id}
+                image={agency.image}
                 name={agency.name}
-                businessOffered={agency.businessOffered}
-                location={agency.location}
+                agencyDetails={agency.agencyDetails}
                 email={agency.email}
                 phoneNumber={agency.phoneNumber}
-                agencyDetails={agency.agencyDetails}
-                image={agency.image}
-                agencyEmail={agency.agencyEmail ? agency.agencyEmail : 'otienomito99@gmail.com'}
-                />
+                businessOffered={agency.businessOffered}
+                location={agency.location}
+                agencyEmail={agency.agencyEmail}
+                onClick={() => handleSelectAgency(agency)} // Handle click event
+              />
             ))}
           </div>
         ) : (
           <p>No results found.</p>
         )}
       </div>
+
+      {selectedAgency && (
+        <Profile
+          agencyData={selectedAgency}
+          setAgencyData={setSelectedAgency}
+        />
+      )}
     </div>
   );
 }

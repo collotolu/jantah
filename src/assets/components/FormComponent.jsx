@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const FormComponent = () => {
+  const navigate = useNavigate();
   const [update, setUpdate] = useState({});
   const [error, setError] = useState({});
   const [succesfulMessage, setsuccesfulMessage] = useState();
@@ -18,7 +20,7 @@ const FormComponent = () => {
   });
 
   useEffect(() => {
-    const agencyData = JSON.parse(localStorage.getItem("user"));
+  const agencyData = JSON.parse(localStorage.getItem("user"));
 
     if (agencyData) {
       setUpdate(agencyData);
@@ -53,7 +55,8 @@ const FormComponent = () => {
     }
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
+    e.preventDefault();
     const errors = {};
     if (!formData.name) {
       errors.name = "Please enter your name";
@@ -89,11 +92,13 @@ const FormComponent = () => {
       try {
         const response = await fetch(url, options);
         const data = await response.json();
-
         if (response.ok) {
           setsuccesfulMessage("Added successfully");
-          setIsLoading(false);
+          navigate("/agency");
           window.location.reload();
+          setIsLoading(false);
+          localStorage.setItem("agency", JSON.stringify(data));
+
         } else {
           setErrorMessage(data.message || "Failed to add the agency");
           setIsLoading(false);
@@ -112,7 +117,10 @@ const FormComponent = () => {
       <div className="bg-white shadow-md rounded p-[7em] w-[40%]">
         <div>
           <div className="mb-4 w-[100%]">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="name"
+            >
               Name
             </label>
             <input
@@ -127,7 +135,10 @@ const FormComponent = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -138,11 +149,16 @@ const FormComponent = () => {
               value={formData.email}
               onChange={handleChange}
             />
-            <p className="text-red-500 font-bold">{error.email && error.email}</p>
+            <p className="text-red-500 font-bold">
+              {error.email && error.email}
+            </p>
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="phoneNumber"
+            >
               Phone Number
             </label>
             <input
@@ -153,11 +169,16 @@ const FormComponent = () => {
               value={formData.phoneNumber}
               onChange={handleChange}
             />
-            <p className="text-red-500 font-bold">{error.phoneNumber && error.phoneNumber}</p>
+            <p className="text-red-500 font-bold">
+              {error.phoneNumber && error.phoneNumber}
+            </p>
           </div>
 
           <div className="mb-4 w-[100%]">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="businessOffered">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="businessOffered"
+            >
               Business Offered
             </label>
             <input
@@ -168,11 +189,16 @@ const FormComponent = () => {
               value={formData.businessOffered}
               onChange={handleChange}
             />
-            <p className="text-red-500 font-bold">{error.businessOffered && error.businessOffered}</p>
+            <p className="text-red-500 font-bold">
+              {error.businessOffered && error.businessOffered}
+            </p>
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="location"
+            >
               Location
             </label>
             <input
@@ -183,11 +209,16 @@ const FormComponent = () => {
               value={formData.location}
               onChange={handleChange}
             />
-            <p className="text-red-500 font-bold">{error.location && error.location}</p>
+            <p className="text-red-500 font-bold">
+              {error.location && error.location}
+            </p>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agencyDetails">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="agencyDetails"
+            >
               Agency Details
             </label>
             <textarea
@@ -197,11 +228,16 @@ const FormComponent = () => {
               value={formData.agencyDetails}
               onChange={handleChange}
             />
-            <p className="text-red-500 font-bold">{error.agencyDetails && error.agencyDetails}</p>
+            <p className="text-red-500 font-bold">
+              {error.agencyDetails && error.agencyDetails}
+            </p>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="image"
+            >
               Upload Image
             </label>
             <input
@@ -211,7 +247,9 @@ const FormComponent = () => {
               onChange={handleChange}
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <p className="text-red-500 font-bold">{error.image && error.image}</p>
+            <p className="text-red-500 font-bold">
+              {error.image && error.image}
+            </p>
           </div>
 
           {formData.image && (
@@ -229,8 +267,12 @@ const FormComponent = () => {
               Submit
             </button>
           </div>
-          <p className="text-green-500 text-[2em] font-bold">{succesfulMessage && succesfulMessage}</p>
-          <p className="text-red-500 text-[2em] font-bold">{errorMessage && errorMessage}</p>
+          <p className="text-green-500 text-[2em] font-bold">
+            {succesfulMessage && succesfulMessage}
+          </p>
+          <p className="text-red-500 text-[2em] font-bold">
+            {errorMessage && errorMessage}
+          </p>
         </div>
       </div>
     </div>

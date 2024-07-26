@@ -13,7 +13,7 @@ function Router() {
       <BrowserRouter>
         <Routes>
           <Route
-            path="/home"
+            path="/"
             element={
               <Layout>
                 <Home />

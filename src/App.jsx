@@ -1,6 +1,12 @@
 import Router from "./assets/components/Router";
+import StateContextProvider from "./context/state";
 function App() {
-  return <Router />;
+  return (
+    <StateContextProvider>
+      {" "}
+      <Router />
+    </StateContextProvider>
+  );
 }
 
 export default App;
